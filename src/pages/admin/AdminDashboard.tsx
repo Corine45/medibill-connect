@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +17,17 @@ import {
 } from "lucide-react";
 
 export const AdminDashboard = () => {
+  const { logout } = useAuth();
+
+  // Déconnexion automatique pour test de redirection
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      logout();
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, [logout]);
+
   // Données factices pour la démonstration
   const stats = {
     total_users: 1247,
