@@ -13,16 +13,21 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { isAuthenticated, isLoading, userRole } = useAuth();
 
+  console.log('ProtectedRoute - isAuthenticated:', isAuthenticated, 'isLoading:', isLoading, 'userRole:', userRole);
+
   if (isLoading) {
+    console.log('ProtectedRoute - Loading...');
     return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
+    console.log('ProtectedRoute - Not authenticated, redirecting to login');
     return <LoginForm />;
   }
 
   // Si des rôles spécifiques sont requis, vérifier l'autorisation
   if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
+    console.log('ProtectedRoute - Access denied for role:', userRole, 'Required roles:', allowedRoles);
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-4">

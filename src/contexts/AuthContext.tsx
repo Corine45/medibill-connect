@@ -33,6 +33,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
 
   const isAuthenticated = !!user && !!authService.getCurrentToken();
+  
+  console.log('AuthContext - user:', user, 'token:', !!authService.getCurrentToken(), 'isAuthenticated:', isAuthenticated);
 
   useEffect(() => {
     initializeAuth();
