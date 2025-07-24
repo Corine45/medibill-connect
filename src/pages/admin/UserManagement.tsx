@@ -544,25 +544,99 @@ export const UserManagement = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center space-x-2 mt-4">
+            <div className="flex items-center justify-center space-x-1 mt-4">
+              {/* Bouton Précédent */}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
+                className="px-3"
               >
                 Précédent
               </Button>
               
-              <span className="text-sm text-muted-foreground">
-                Page {currentPage} sur {totalPages}
-              </span>
+              {/* Pages numérotées */}
+              {(() => {
+                const pages = [];
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                
+                // Ajuster si on est proche de la fin
+                if (endPage - startPage < maxVisiblePages - 1) {
+                  startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+                
+                // Page 1 si pas visible
+                if (startPage > 1) {
+                  pages.push(
+                    <Button
+                      key={1}
+                      variant={1 === currentPage ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(1)}
+                      className="min-w-[40px]"
+                    >
+                      1
+                    </Button>
+                  );
+                  if (startPage > 2) {
+                    pages.push(
+                      <span key="ellipsis1" className="px-2 text-muted-foreground">
+                        ...
+                      </span>
+                    );
+                  }
+                }
+                
+                // Pages visibles
+                for (let i = startPage; i <= endPage; i++) {
+                  pages.push(
+                    <Button
+                      key={i}
+                      variant={i === currentPage ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(i)}
+                      className="min-w-[40px]"
+                    >
+                      {i}
+                    </Button>
+                  );
+                }
+                
+                // Dernière page si pas visible
+                if (endPage < totalPages) {
+                  if (endPage < totalPages - 1) {
+                    pages.push(
+                      <span key="ellipsis2" className="px-2 text-muted-foreground">
+                        ...
+                      </span>
+                    );
+                  }
+                  pages.push(
+                    <Button
+                      key={totalPages}
+                      variant={totalPages === currentPage ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(totalPages)}
+                      className="min-w-[40px]"
+                    >
+                      {totalPages}
+                    </Button>
+                  );
+                }
+                
+                return pages;
+              })()}
               
+              {/* Bouton Suivant */}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
+                className="px-3"
               >
                 Suivant
               </Button>
