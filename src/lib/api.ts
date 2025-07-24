@@ -1,6 +1,6 @@
 // Configuration de l'API pour Laravel
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://passpayapi.a-car.ci/api';
-export const BASE_URL = import.meta.env.VITE_BASE_URL || 'https://passpayapi.a-car.ci/passpay/public';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://passpay.a-car.ci/api';
+export const BASE_URL = import.meta.env.VITE_BASE_URL || 'https://passpay.a-car.ci/passpay/public';
 
 // Configuration des headers pour les requêtes
 export const getAuthHeaders = () => {

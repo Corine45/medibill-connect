@@ -97,7 +97,11 @@ const App = () => (
 
 // Composant pour router vers le bon dashboard selon le rôle
 const DashboardRouter = () => {
-  const { userRole } = useAuth();
+  const { userRole, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div>Chargement...</div>;
+  }
   
   if (userRole === 'patient') return <Navigate to="/patient" replace />;
   if (userRole === 'provider') return <Navigate to="/provider" replace />;
