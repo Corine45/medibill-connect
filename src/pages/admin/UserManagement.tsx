@@ -563,6 +563,8 @@ export const UserManagement = () => {
                 size="sm"
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
+              >
+                Suivant
               </Button>
             </div>
           )}
