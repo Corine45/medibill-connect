@@ -121,6 +121,7 @@ export const UserManagement = () => {
     e.preventDefault();
     if (!selectedUser) return;
 
+    console.log("Formulaire envoyé :", editForm);
     setIsLoading(true);
     try {
       await userManagementService.updateUser(selectedUser.id, editForm);
