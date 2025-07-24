@@ -49,7 +49,7 @@ export const authService = {
     return response;
   },
 
-  async updateProfile(data: { name: string }): Promise<ApiResponse<User>> {
+  async updateProfile(data: { name: string; phone: string }): Promise<ApiResponse<User>> {
     return apiRequest<ApiResponse<User>>('/users/me/update', {
       method: 'PUT',
       body: JSON.stringify(data),

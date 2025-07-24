@@ -61,7 +61,7 @@ export const UserManagement = () => {
       const response = await userManagementService.getUsers({
         page: currentPage,
         search: searchTerm,
-        status: statusFilter,
+        status: statusFilter === 'all' ? '' : statusFilter,
       });
 
       if (response.status && response.data) {
@@ -412,7 +412,7 @@ export const UserManagement = () => {
                 <SelectValue placeholder="Statut" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tous</SelectItem>
+                <SelectItem value="all">Tous</SelectItem>
                 <SelectItem value="Actif">Actifs</SelectItem>
                 <SelectItem value="Inactif">Inactifs</SelectItem>
               </SelectContent>

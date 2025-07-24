@@ -26,7 +26,8 @@ export const Profile = () => {
 
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
-    email: user?.email || ''
+    email: user?.email || '',
+    phone: user?.phone || ''
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -76,8 +77,11 @@ export const Profile = () => {
     setIsLoading(true);
 
     try {
-      if (profileData.name !== user?.name) {
-        await authService.updateProfile({ name: profileData.name });
+      if (profileData.name !== user?.name || profileData.phone !== user?.phone) {
+        await authService.updateProfile({ 
+          name: profileData.name,
+          phone: profileData.phone 
+        });
       }
       
       if (profileData.email !== user?.email) {
@@ -231,18 +235,32 @@ export const Profile = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Adresse email</Label>
+                    <Label htmlFor="phone">Téléphone</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Smartphone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
-                        id="email"
-                        type="email"
-                        value={profileData.email}
-                        onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                        id="phone"
+                        value={profileData.phone}
+                        onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
                         className="pl-10"
                         disabled={isLoading}
                       />
                     </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Adresse email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      type="email"
+                      value={profileData.email}
+                      onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                      className="pl-10"
+                      disabled={isLoading}
+                    />
                   </div>
                 </div>
 
