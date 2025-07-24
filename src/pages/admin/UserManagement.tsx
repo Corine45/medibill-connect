@@ -543,29 +543,29 @@ export const UserManagement = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-center space-x-2 mt-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-            >
-              Précédent
-            </Button>
-            
-            <span className="text-sm text-muted-foreground">
-              Page {currentPage} sur {totalPages}
-            </span>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-            >
-              Suivant
-            </Button>
-          </div>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center space-x-2 mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+              >
+                Précédent
+              </Button>
+              
+              <span className="text-sm text-muted-foreground">
+                Page {currentPage} sur {totalPages}
+              </span>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
