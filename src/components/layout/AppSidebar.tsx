@@ -209,7 +209,7 @@ export function AppSidebar() {
           <Button
             variant="outline"
             size="sm"
-            className="w-full justify-start text-sidebar-foreground border-sidebar-border hover:bg-destructive hover:text-destructive-foreground hover:border-destructive"
+            className="w-full justify-start text-destructive border-destructive/50 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive"
             onClick={handleLogout}
           >
             <LogOut className="w-4 h-4 mr-2" />
