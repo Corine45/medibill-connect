@@ -198,7 +198,7 @@ export const UserManagement = () => {
     setEditForm({
       name: user.name,
       email: user.email,
-      phone: user.phone,
+      phone: user.phone || '',
       role: user.role,
     });
     setShowEditModal(true);
@@ -440,7 +440,7 @@ export const UserManagement = () => {
                       <div className="flex items-center space-x-3">
                         {user.photo ? (
                           <img 
-                            src={user.photo.startsWith('http') ? user.photo : `https://passpayapi.a-car.ci/passpay/public/storage/${user.photo}`}
+                            src={user.photo.startsWith('http') ? user.photo : `https://passpay.a-car.ci/passpay/public/${user.photo}`}
                             alt="Avatar"
                             className="w-8 h-8 rounded-full object-cover"
                           />
@@ -567,7 +567,7 @@ export const UserManagement = () => {
               <div className="flex items-center space-x-4">
                 {selectedUser.photo ? (
                   <img 
-                    src={selectedUser.photo.startsWith('http') ? selectedUser.photo : `https://passpayapi.a-car.ci/passpay/public/storage/${selectedUser.photo}`}
+                    src={selectedUser.photo.startsWith('http') ? selectedUser.photo : `https://passpay.a-car.ci/passpay/public/${selectedUser.photo}`}
                     alt="Photo de profil"
                     className="w-16 h-16 rounded-full object-cover"
                   />

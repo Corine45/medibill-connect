@@ -81,11 +81,11 @@ export const userManagementService = {
 
   async updateUser(id: number, userData: UpdateUserData): Promise<ApiResponse<UserData>> {
     const formData = new FormData();
-    if (userData.name) formData.append('name', userData.name);
-    if (userData.email) formData.append('email', userData.email);
-    if (userData.password) formData.append('password', userData.password);
-    if (userData.phone) formData.append('phone', userData.phone);
-    if (userData.role) formData.append('role', userData.role);
+    if (userData.name !== undefined) formData.append('name', userData.name);
+    if (userData.email !== undefined) formData.append('email', userData.email);
+    if (userData.password !== undefined) formData.append('password', userData.password);
+    if (userData.phone !== undefined) formData.append('phone', userData.phone || '');
+    if (userData.role !== undefined) formData.append('role', userData.role);
     if (userData.photo) formData.append('photo', userData.photo);
 
     return apiRequest<ApiResponse<UserData>>(`/users/users-management/users-management/${id}`, {

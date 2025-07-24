@@ -156,7 +156,7 @@ export const Profile = () => {
             <div className="relative group">
               {user?.photo ? (
                 <img 
-                  src={user.photo.startsWith('http') ? user.photo : `https://passpayapi.a-car.ci/passpay/public/storage/${user.photo}`}
+                  src={user.photo.startsWith('http') ? user.photo : `https://passpay.a-car.ci/passpay/public/${user.photo}`}
                   alt="Photo de profil"
                   className="w-16 h-16 rounded-full object-cover"
                 />
