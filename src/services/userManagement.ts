@@ -1,3 +1,4 @@
+
 import { apiRequest } from '@/lib/api';
 import { ApiResponse } from '@/types/api';
 
@@ -52,12 +53,12 @@ export const userManagementService = {
     if (params?.search) searchParams.append('search', params.search);
     if (params?.status) searchParams.append('status', params.status);
 
-    const url = `/users/users-management${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+    const url = `/users/users-management/users-management${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
     return apiRequest<ApiResponse<UserListResponse>>(url);
   },
 
   async getUser(id: number): Promise<ApiResponse<UserData>> {
-    return apiRequest<ApiResponse<UserData>>(`/users/users-management/${id}`);
+    return apiRequest<ApiResponse<UserData>>(`/users/users-management/users-management/${id}`);
   },
 
   async createUser(userData: CreateUserData): Promise<ApiResponse<UserData>> {
@@ -72,7 +73,7 @@ export const userManagementService = {
       formData.append('photo', userData.photo);
     }
 
-    return apiRequest<ApiResponse<UserData>>('/users/users-management', {
+    return apiRequest<ApiResponse<UserData>>('/users/users-management/users-management', {
       method: 'POST',
       body: formData,
     });
@@ -87,20 +88,20 @@ export const userManagementService = {
     if (userData.role) formData.append('role', userData.role);
     if (userData.photo) formData.append('photo', userData.photo);
 
-    return apiRequest<ApiResponse<UserData>>(`/users/users-management/${id}`, {
+    return apiRequest<ApiResponse<UserData>>(`/users/users-management/users-management/${id}`, {
       method: 'PUT',
       body: formData,
     });
   },
 
   async deleteUser(id: number): Promise<ApiResponse<void>> {
-    return apiRequest<ApiResponse<void>>(`/users/users-management/${id}`, {
+    return apiRequest<ApiResponse<void>>(`/users/users-management/users-management/${id}`, {
       method: 'DELETE',
     });
   },
 
   async restoreUser(id: number): Promise<ApiResponse<void>> {
-    return apiRequest<ApiResponse<void>>(`/users/users-management/restore/${id}`, {
+    return apiRequest<ApiResponse<void>>(`/users/users-management/users-management/restore/${id}`, {
       method: 'PUT',
     });
   },
