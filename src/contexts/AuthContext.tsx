@@ -56,20 +56,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshUserData = async () => {
     try {
-      const response = await authService.meRole();
+      // Utiliser /users/me qui retourne les données utilisateur complètes + rôle
+      const response = await authService.me();
       if (response.status && response.data) {
-        // Ne mettre à jour l'utilisateur que s'il est présent dans la réponse
-        if (response.data.user) {
-          setUser(response.data.user);
-          localStorage.setItem('user_data', JSON.stringify(response.data.user));
-        }
-        
-        // Toujours mettre à jour le rôle et linked_id
+        setUser(response.data.user);
         setUserRole(response.data.role);
-        setLinkedId(response.data.linked_id);
+        setLinkedId(response.data.linked_id || null);
+        localStorage.setItem('user_data', JSON.stringify(response.data.user));
         localStorage.setItem('user_role', response.data.role);
         
-        console.log('refreshUserData - role updated:', response.data.role);
+        console.log('refreshUserData - user and role updated:', response.data.user, response.data.role);
       }
     } catch (error) {
       console.error('Erreur lors de la récupération des données utilisateur:', error);

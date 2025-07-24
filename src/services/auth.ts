@@ -29,8 +29,8 @@ export const authService = {
     });
   },
 
-  async me(): Promise<ApiResponse<User>> {
-    return apiRequest<ApiResponse<User>>('/users/me');
+  async me(): Promise<ApiResponse<{ user: User; role: string; linked_id?: number }>> {
+    return apiRequest<ApiResponse<{ user: User; role: string; linked_id?: number }>>('/users/me');
   },
 
   async meRole(): Promise<ApiResponse<{ user: User; role: string; linked_id: number }>> {
