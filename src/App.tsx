@@ -106,10 +106,23 @@ const DashboardRouter = () => {
     return <div>Chargement...</div>;
   }
   
-  if (userRole === 'patient') return <Navigate to="/patient" replace />;
-  if (userRole === 'provider') return <Navigate to="/provider" replace />;
-  if (userRole === 'pharmacy') return <Navigate to="/pharmacy" replace />;
-  if (userRole === 'admin' || userRole === 'superadmin') return <Navigate to="/admin" replace />;
+  // Forcer la redirection immédiate selon le rôle
+  if (userRole === 'patient') {
+    window.location.replace('/patient');
+    return null;
+  }
+  if (userRole === 'provider') {
+    window.location.replace('/provider');
+    return null;
+  }
+  if (userRole === 'pharmacy') {
+    window.location.replace('/pharmacy');
+    return null;
+  }
+  if (userRole === 'admin' || userRole === 'superadmin') {
+    window.location.replace('/admin');
+    return null;
+  }
   
   // Si pas de rôle défini, rediriger vers login
   return <Navigate to="/auth/login" replace />;

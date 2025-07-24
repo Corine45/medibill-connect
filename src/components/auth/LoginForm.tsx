@@ -23,10 +23,10 @@ export const LoginForm = () => {
     const success = await login(email, password);
     
     if (success) {
-      // Attendre un court délai pour que le userRole soit défini
+      // Attendre que le userRole soit défini puis rediriger
       setTimeout(() => {
-        navigate('/dashboard');
-      }, 100);
+        window.location.href = '/dashboard';
+      }, 500);
     }
     
     setIsLoading(false);
