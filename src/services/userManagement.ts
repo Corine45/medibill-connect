@@ -81,6 +81,7 @@ export const userManagementService = {
 
   async updateUser(id: number, userData: UpdateUserData): Promise<ApiResponse<UserData>> {
     const formData = new FormData();
+    formData.append('_method', 'PUT'); // Nécessaire pour Laravel avec FormData
     if (userData.name !== undefined) formData.append('name', userData.name);
     if (userData.email !== undefined) formData.append('email', userData.email);
     if (userData.password !== undefined) formData.append('password', userData.password);
@@ -89,7 +90,7 @@ export const userManagementService = {
     if (userData.photo) formData.append('photo', userData.photo);
 
     return apiRequest<ApiResponse<UserData>>(`/users/users-management/users-management/${id}`, {
-      method: 'PUT',
+      method: 'POST', // Utiliser POST avec _method=PUT pour FormData
       body: formData,
     });
   },
