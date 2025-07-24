@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 export const Profile = () => {
-  const { user, userRole, updateUser } = useAuth();
+  const { user, userRole, updateUser, refreshUserData } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,6 +34,42 @@ export const Profile = () => {
     nouveau: '',
     confirmation: ''
   });
+
+  const handlePhotoUpdate = async (file: File) => {
+    setIsLoading(true);
+    try {
+      const response = await authService.updatePhoto(file);
+      
+      toast({
+        title: "Photo mise à jour",
+        description: "Votre photo de profil a été mise à jour avec succès.",
+      });
+
+      // Rafraîchir les données utilisateur
+      await refreshUserData();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message || "Impossible de mettre à jour la photo",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePhotoClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        handlePhotoUpdate(file);
+      }
+    };
+    input.click();
+  };
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,8 +144,22 @@ export const Profile = () => {
       <Card className="shadow-card">
         <CardHeader>
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center">
-              <User className="w-8 h-8 text-white" />
+            <div className="relative group">
+              {user?.photo ? (
+                <img 
+                  src={user.photo.startsWith('http') ? user.photo : `https://passpay.a-car.ci/storage/${user.photo}`}
+                  alt="Photo de profil"
+                  className="w-16 h-16 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center">
+                  <User className="w-8 h-8 text-white" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer flex items-center justify-center"
+                   onClick={handlePhotoClick}>
+                <Camera className="w-6 h-6 text-white" />
+              </div>
             </div>
             <div className="flex-1">
               <CardTitle className="text-2xl">{user?.name}</CardTitle>
@@ -120,7 +170,12 @@ export const Profile = () => {
                 <span>{user?.email}</span>
               </CardDescription>
             </div>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handlePhotoClick}
+              disabled={isLoading}
+            >
               <Camera className="w-4 h-4 mr-2" />
               Changer photo
             </Button>

@@ -183,11 +183,19 @@ export function AppSidebar() {
       <SidebarFooter className="border-t border-sidebar-border p-4">
         <div className="space-y-3">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium">
-                {user?.name?.charAt(0)?.toUpperCase()}
-              </span>
-            </div>
+            {user?.photo ? (
+              <img 
+                src={user.photo.startsWith('http') ? user.photo : `https://passpay.a-car.ci/storage/${user.photo}`}
+                alt="Photo de profil"
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+                <span className="text-sm font-medium">
+                  {user?.name?.charAt(0)?.toUpperCase()}
+                </span>
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-sidebar-foreground truncate">
                 {user?.name}
@@ -201,7 +209,7 @@ export function AppSidebar() {
           <Button
             variant="outline"
             size="sm"
-            className="w-full justify-start"
+            className="w-full justify-start text-sidebar-foreground border-sidebar-border hover:bg-destructive hover:text-destructive-foreground hover:border-destructive"
             onClick={handleLogout}
           >
             <LogOut className="w-4 h-4 mr-2" />
