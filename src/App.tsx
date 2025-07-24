@@ -100,6 +100,8 @@ const App = () => (
 const DashboardRouter = () => {
   const { userRole, isLoading } = useAuth();
   
+  console.log('DashboardRouter - userRole:', userRole, 'isLoading:', isLoading);
+  
   if (isLoading) {
     return <div>Chargement...</div>;
   }
@@ -109,7 +111,8 @@ const DashboardRouter = () => {
   if (userRole === 'pharmacy') return <Navigate to="/pharmacy" replace />;
   if (userRole === 'admin' || userRole === 'superadmin') return <Navigate to="/admin" replace />;
   
-  return <div>Chargement...</div>;
+  // Si pas de rôle défini, rediriger vers login
+  return <Navigate to="/auth/login" replace />;
 };
 
 // Routes Patient

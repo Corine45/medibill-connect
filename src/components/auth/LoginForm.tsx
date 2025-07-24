@@ -23,8 +23,10 @@ export const LoginForm = () => {
     const success = await login(email, password);
     
     if (success) {
-      // Redirection vers le dashboard après connexion réussie
-      navigate('/dashboard');
+      // Attendre un court délai pour que le userRole soit défini
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 100);
     }
     
     setIsLoading(false);
