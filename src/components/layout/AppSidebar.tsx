@@ -185,7 +185,7 @@ export function AppSidebar() {
           <div className="flex items-center space-x-3">
             {user?.photo ? (
               <img 
-                src={user.photo.startsWith('http') ? user.photo : `https://passpay.a-car.ci/storage/${user.photo}`}
+                src={user.photo.startsWith('http') ? user.photo : `https://passpayapi.a-car.ci/storage/${user.photo}`}
                 alt="Photo de profil"
                 className="w-8 h-8 rounded-full object-cover"
               />

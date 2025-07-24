@@ -412,7 +412,7 @@ export const UserManagement = () => {
                 <SelectValue placeholder="Statut" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tous</SelectItem>
+                <SelectItem value="all">Tous</SelectItem>
                 <SelectItem value="Actif">Actifs</SelectItem>
                 <SelectItem value="Inactif">Inactifs</SelectItem>
               </SelectContent>
@@ -440,7 +440,7 @@ export const UserManagement = () => {
                       <div className="flex items-center space-x-3">
                         {user.photo ? (
                           <img 
-                            src={user.photo.startsWith('http') ? user.photo : `https://passpay.a-car.ci/storage/${user.photo}`}
+                            src={user.photo.startsWith('http') ? user.photo : `https://passpayapi.a-car.ci/storage/${user.photo}`}
                             alt="Avatar"
                             className="w-8 h-8 rounded-full object-cover"
                           />
