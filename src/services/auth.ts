@@ -73,9 +73,10 @@ export const authService = {
   async updatePhoto(file: File): Promise<ApiResponse<{ photo_url: string }>> {
     const formData = new FormData();
     formData.append('photo', file);
+    formData.append('_method', 'PUT'); // Method spoofing pour Laravel
 
     return apiRequest<ApiResponse<{ photo_url: string }>>('/users/me/update-photo', {
-      method: 'PUT',
+      method: 'POST',
       body: formData,
     });
   },
