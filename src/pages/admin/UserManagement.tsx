@@ -10,6 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { userManagementService, UserData, CreateUserData, UpdateUserData } from "@/services/userManagement";
+import { BASE_URL } from "@/lib/api";
 import {
   Users,
   Plus,
@@ -441,7 +442,7 @@ export const UserManagement = () => {
                       <div className="flex items-center space-x-3">
                         {user.photo ? (
                           <img 
-                            src={user.photo.startsWith('http') ? user.photo : `https://passpay.a-car.ci/passpay/public/${user.photo}`}
+                            src={user.photo.startsWith('http') ? user.photo : `${BASE_URL}/storage/${user.photo}`}
                             alt="Avatar"
                             className="w-8 h-8 rounded-full object-cover"
                           />
@@ -510,14 +511,28 @@ export const UserManagement = () => {
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
-                        ) : (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleRestoreUser(user.id)}
-                          >
-                            <RotateCcw className="w-4 h-4 text-success" />
-                          </Button>
+                         ) : (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <RotateCcw className="w-4 h-4 text-success" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Restaurer l'utilisateur</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Êtes-vous sûr de vouloir restaurer cet utilisateur ? Il redeviendra actif dans le système.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleRestoreUser(user.id)}>
+                                  Restaurer
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         )}
                       </div>
                     </TableCell>
@@ -568,7 +583,7 @@ export const UserManagement = () => {
               <div className="flex items-center space-x-4">
                 {selectedUser.photo ? (
                   <img 
-                    src={selectedUser.photo.startsWith('http') ? selectedUser.photo : `https://passpay.a-car.ci/passpay/public/${selectedUser.photo}`}
+                    src={selectedUser.photo.startsWith('http') ? selectedUser.photo : `${BASE_URL}/storage/${selectedUser.photo}`}
                     alt="Photo de profil"
                     className="w-16 h-16 rounded-full object-cover"
                   />

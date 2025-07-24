@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { authService } from "@/services/auth";
+import { BASE_URL } from "@/lib/api";
 import { 
   User, 
   Mail, 
@@ -156,7 +157,7 @@ export const Profile = () => {
             <div className="relative group">
               {user?.photo ? (
                 <img 
-                  src={user.photo.startsWith('http') ? user.photo : `https://passpay.a-car.ci/passpay/public/${user.photo}`}
+                  src={user.photo.startsWith('http') ? user.photo : `${BASE_URL}/storage/${user.photo}`}
                   alt="Photo de profil"
                   className="w-16 h-16 rounded-full object-cover"
                 />

@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { BASE_URL } from "@/lib/api";
 
 const roleMenus = {
   superadmin: [
@@ -185,7 +186,7 @@ export function AppSidebar() {
           <div className="flex items-center space-x-3">
             {user?.photo ? (
               <img 
-                src={user.photo.startsWith('http') ? user.photo : `https://passpay.a-car.ci/passpay/public/${user.photo}`}
+                src={user.photo.startsWith('http') ? user.photo : `${BASE_URL}/storage/${user.photo}`}
                 alt="Photo de profil"
                 className="w-8 h-8 rounded-full object-cover"
               />
