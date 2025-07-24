@@ -412,7 +412,7 @@ export const UserManagement = () => {
                 <SelectValue placeholder="Statut" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous</SelectItem>
+                <SelectItem value="">Tous</SelectItem>
                 <SelectItem value="Actif">Actifs</SelectItem>
                 <SelectItem value="Inactif">Inactifs</SelectItem>
               </SelectContent>

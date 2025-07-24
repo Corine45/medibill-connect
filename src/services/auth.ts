@@ -50,16 +50,25 @@ export const authService = {
   },
 
   async updateProfile(data: { name: string; phone: string }): Promise<ApiResponse<User>> {
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('phone', data.phone);
+    formData.append('_method', 'PUT'); // Method spoofing pour Laravel
+    
     return apiRequest<ApiResponse<User>>('/users/me/update', {
-      method: 'PUT',
-      body: JSON.stringify(data),
+      method: 'POST',
+      body: formData,
     });
   },
 
   async updateInfo(data: { email: string }): Promise<ApiResponse<User>> {
+    const formData = new FormData();
+    formData.append('email', data.email);
+    formData.append('_method', 'PUT'); // Method spoofing pour Laravel
+    
     return apiRequest<ApiResponse<User>>('/users/me/update-info', {
-      method: 'PUT',
-      body: JSON.stringify(data),
+      method: 'POST',
+      body: formData,
     });
   },
 

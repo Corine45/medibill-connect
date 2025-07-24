@@ -41,6 +41,11 @@ export const Profile = () => {
     try {
       const response = await authService.updatePhoto(file);
       
+      if (response.status && response.data) {
+        // Mettre à jour directement avec l'URL complète
+        updateUser({ photo: response.data.photo_url });
+      }
+      
       toast({
         title: "Photo mise à jour",
         description: "Votre photo de profil a été mise à jour avec succès.",
