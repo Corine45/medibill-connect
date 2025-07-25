@@ -348,9 +348,8 @@ export const UserManagement = () => {
                         <SelectValue placeholder="Sélectionner un rôle" />
                       </SelectTrigger>
                        <SelectContent>
-                        <SelectItem value="patient">Patient</SelectItem>
-                        <SelectItem value="provider">Prestataire</SelectItem>
                         <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="superadmin">Super Admin</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -715,118 +714,19 @@ export const UserManagement = () => {
                 </div>
               </div>
 
-              {/* Données liées selon le rôle */}
+              {/* Données liées selon le rôle - seulement si c'est un admin/superadmin avec des relations */}
               {((selectedUser as any).patient || (selectedUser as any).provider || (selectedUser as any).pharmacy) && (
                 <div className="space-y-4">
                   <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
-                    Données spécifiques au rôle
+                    Données liées (historiques)
                   </h4>
                   
-                  {/* Données patient */}
-                  {(selectedUser as any).patient && (
-                    <div className="p-4 border rounded-lg space-y-3">
-                      <h5 className="font-medium text-primary">Données Patient</h5>
-                      <div className="grid gap-3 md:grid-cols-2 text-sm">
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Nom complet</Label>
-                          <p className="font-medium">
-                            {(selectedUser as any).patient.first_name} {(selectedUser as any).patient.last_name}
-                          </p>
-                        </div>
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Date de naissance</Label>
-                          <p className="font-medium">
-                            {(selectedUser as any).patient.birth_date ? 
-                              new Date((selectedUser as any).patient.birth_date).toLocaleDateString('fr-FR') : 
-                              'Non renseigné'
-                            }
-                          </p>
-                        </div>
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Groupe sanguin</Label>
-                          <p className="font-medium">{(selectedUser as any).patient.blood_group || 'Non renseigné'}</p>
-                        </div>
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Profession</Label>
-                          <p className="font-medium">{(selectedUser as any).patient.profession || 'Non renseigné'}</p>
-                        </div>
-                        {(selectedUser as any).patient.address && (
-                          <div className="md:col-span-2">
-                            <Label className="text-xs text-muted-foreground">Adresse</Label>
-                            <p className="font-medium">{(selectedUser as any).patient.address}</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Données prestataire */}
-                  {(selectedUser as any).provider && (
-                    <div className="p-4 border rounded-lg space-y-3">
-                      <h5 className="font-medium text-primary">Données Prestataire</h5>
-                      <div className="grid gap-3 md:grid-cols-2 text-sm">
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Type</Label>
-                          <p className="font-medium">{(selectedUser as any).provider.type || 'Non renseigné'}</p>
-                        </div>
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Directeur</Label>
-                          <p className="font-medium">{(selectedUser as any).provider.director || 'Non renseigné'}</p>
-                        </div>
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Numéro d'agrément</Label>
-                          <p className="font-medium">{(selectedUser as any).provider.approval_number || 'Non renseigné'}</p>
-                        </div>
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Spécialités</Label>
-                          <p className="font-medium">
-                            {(selectedUser as any).provider.specialties?.join(', ') || 'Non renseigné'}
-                          </p>
-                        </div>
-                        {(selectedUser as any).provider.address && (
-                          <div className="md:col-span-2">
-                            <Label className="text-xs text-muted-foreground">Adresse</Label>
-                            <p className="font-medium">{(selectedUser as any).provider.address}</p>
-                          </div>
-                        )}
-                        {(selectedUser as any).provider.description && (
-                          <div className="md:col-span-2">
-                            <Label className="text-xs text-muted-foreground">Description</Label>
-                            <p className="font-medium">{(selectedUser as any).provider.description}</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Données pharmacie */}
-                  {(selectedUser as any).pharmacy && (
-                    <div className="p-4 border rounded-lg space-y-3">
-                      <h5 className="font-medium text-primary">Données Pharmacie</h5>
-                      <div className="grid gap-3 md:grid-cols-2 text-sm">
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Directeur</Label>
-                          <p className="font-medium">{(selectedUser as any).pharmacy.director || 'Non renseigné'}</p>
-                        </div>
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Numéro d'agrément</Label>
-                          <p className="font-medium">{(selectedUser as any).pharmacy.approval_number || 'Non renseigné'}</p>
-                        </div>
-                        {(selectedUser as any).pharmacy.address && (
-                          <div className="md:col-span-2">
-                            <Label className="text-xs text-muted-foreground">Adresse</Label>
-                            <p className="font-medium">{(selectedUser as any).pharmacy.address}</p>
-                          </div>
-                        )}
-                        {(selectedUser as any).pharmacy.description && (
-                          <div className="md:col-span-2">
-                            <Label className="text-xs text-muted-foreground">Description</Label>
-                            <p className="font-medium">{(selectedUser as any).pharmacy.description}</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
+                  {/* Note : Ces données sont conservées pour l'historique mais ne sont plus activement utilisées */}
+                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p className="text-sm text-amber-800">
+                      Note: Ces données peuvent provenir d'anciens rôles et sont conservées à des fins d'historique.
+                    </p>
+                  </div>
                 </div>
               )}
 
@@ -919,9 +819,8 @@ export const UserManagement = () => {
                   <SelectValue placeholder="Sélectionner un rôle" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="patient">Patient</SelectItem>
-                  <SelectItem value="provider">Prestataire</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="superadmin">Super Admin</SelectItem>
                 </SelectContent>
               </Select>
             </div>
