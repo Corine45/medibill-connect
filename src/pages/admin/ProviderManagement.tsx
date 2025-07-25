@@ -274,59 +274,74 @@ export function ProviderManagement() {
               Nouveau Prestataire
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Créer un nouveau prestataire</DialogTitle>
               <DialogDescription>
                 Ajoutez un nouveau prestataire de santé au système
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="user_id">Utilisateur *</Label>
-                <Select
-                  value={formData.user_id?.toString()}
-                  onValueChange={(value) => setFormData({ ...formData, user_id: parseInt(value) })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un utilisateur" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableUsers.map((user) => (
-                      <SelectItem key={user.id} value={user.id.toString()}>
-                        {user.name} ({user.email})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="user_id">Utilisateur *</Label>
+                  <Select
+                    value={formData.user_id?.toString()}
+                    onValueChange={(value) => setFormData({ ...formData, user_id: parseInt(value) })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner un utilisateur" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableUsers.map((user) => (
+                        <SelectItem key={user.id} value={user.id.toString()}>
+                          {user.name} ({user.email})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="type">Type de prestataire *</Label>
+                  <Select
+                    value={formData.type}
+                    onValueChange={(value) => setFormData({ ...formData, type: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Type de prestataire" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Clinique">Clinique</SelectItem>
+                      <SelectItem value="Hôpital">Hôpital</SelectItem>
+                      <SelectItem value="Centre médical">Centre médical</SelectItem>
+                      <SelectItem value="Cabinet médical">Cabinet médical</SelectItem>
+                      <SelectItem value="Laboratoire">Laboratoire</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div>
-                <Label htmlFor="name">Nom du prestataire *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Nom du prestataire"
-                />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="name">Nom du prestataire *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Nom du prestataire"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="phone">Téléphone</Label>
+                  <Input
+                    id="phone"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="Téléphone du prestataire"
+                  />
+                </div>
               </div>
-              <div>
-                <Label htmlFor="type">Type de prestataire *</Label>
-                <Select
-                  value={formData.type}
-                  onValueChange={(value) => setFormData({ ...formData, type: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Type de prestataire" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Clinique">Clinique</SelectItem>
-                    <SelectItem value="Hôpital">Hôpital</SelectItem>
-                    <SelectItem value="Centre médical">Centre médical</SelectItem>
-                    <SelectItem value="Cabinet médical">Cabinet médical</SelectItem>
-                    <SelectItem value="Laboratoire">Laboratoire</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              
               <div>
                 <Label htmlFor="address">Adresse</Label>
                 <Textarea
@@ -334,6 +349,7 @@ export function ProviderManagement() {
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   placeholder="Adresse du prestataire"
+                  rows={3}
                 />
               </div>
             </div>
@@ -581,26 +597,28 @@ export function ProviderManagement() {
 
       {/* Modal d'édition */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Modifier le prestataire</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="edit-name">Nom du prestataire *</Label>
-              <Input
-                id="edit-name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="edit-phone">Téléphone</Label>
-              <Input
-                id="edit-phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              />
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <Label htmlFor="edit-name">Nom du prestataire *</Label>
+                <Input
+                  id="edit-name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-phone">Téléphone</Label>
+                <Input
+                  id="edit-phone"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                />
+              </div>
             </div>
             <div>
               <Label htmlFor="edit-address">Adresse</Label>
@@ -608,6 +626,7 @@ export function ProviderManagement() {
                 id="edit-address"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                rows={3}
               />
             </div>
           </div>

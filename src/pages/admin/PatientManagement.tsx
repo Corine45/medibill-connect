@@ -280,7 +280,7 @@ export const PatientManagement = () => {
                   Nouveau Patient
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-md">
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Créer un patient</DialogTitle>
                   <DialogDescription>
@@ -288,102 +288,108 @@ export const PatientManagement = () => {
                   </DialogDescription>
                 </DialogHeader>
                 
-                <form onSubmit={handleCreatePatient} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="create-user-id">ID Utilisateur</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <form onSubmit={handleCreatePatient} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="create-user-id">ID Utilisateur</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="create-user-id"
+                          type="number"
+                          value={createForm.user_id || ''}
+                          onChange={(e) => setCreateForm({ ...createForm, user_id: parseInt(e.target.value) || 0 })}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="create-birth-date">Date de naissance</Label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="create-birth-date"
+                          type="date"
+                          value={createForm.birth_date}
+                          onChange={(e) => setCreateForm({ ...createForm, birth_date: e.target.value })}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="create-first-name">Prénom</Label>
                       <Input
-                        id="create-user-id"
-                        type="number"
-                        value={createForm.user_id || ''}
-                        onChange={(e) => setCreateForm({ ...createForm, user_id: parseInt(e.target.value) || 0 })}
-                        className="pl-10"
+                        id="create-first-name"
+                        value={createForm.first_name}
+                        onChange={(e) => setCreateForm({ ...createForm, first_name: e.target.value })}
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="create-last-name">Nom</Label>
+                      <Input
+                        id="create-last-name"
+                        value={createForm.last_name}
+                        onChange={(e) => setCreateForm({ ...createForm, last_name: e.target.value })}
                         required
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="create-first-name">Prénom</Label>
-                    <Input
-                      id="create-first-name"
-                      value={createForm.first_name}
-                      onChange={(e) => setCreateForm({ ...createForm, first_name: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="create-last-name">Nom</Label>
-                    <Input
-                      id="create-last-name"
-                      value={createForm.last_name}
-                      onChange={(e) => setCreateForm({ ...createForm, last_name: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="create-birth-date">Date de naissance</Label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="create-birth-date"
-                        type="date"
-                        value={createForm.birth_date}
-                        onChange={(e) => setCreateForm({ ...createForm, birth_date: e.target.value })}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="create-gender">Genre</Label>
-                    <Select value={createForm.gender} onValueChange={(value) => setCreateForm({ ...createForm, gender: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner le genre" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Homme</SelectItem>
-                        <SelectItem value="female">Femme</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="create-blood-type">Groupe sanguin</Label>
-                    <div className="relative">
-                      <Activity className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="create-blood-type"
-                        value={createForm.blood_type}
-                        onChange={(e) => setCreateForm({ ...createForm, blood_type: e.target.value })}
-                        className="pl-10"
-                        placeholder="A+, B-, O+, etc."
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="create-height">Taille (cm)</Label>
-                      <Input
-                        id="create-height"
-                        type="number"
-                        value={createForm.height || ''}
-                        onChange={(e) => setCreateForm({ ...createForm, height: e.target.value ? parseFloat(e.target.value) : undefined })}
-                      />
+                      <Label htmlFor="create-gender">Genre</Label>
+                      <Select value={createForm.gender} onValueChange={(value) => setCreateForm({ ...createForm, gender: value })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionner le genre" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Homme</SelectItem>
+                          <SelectItem value="female">Femme</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
+
                     <div className="space-y-2">
-                      <Label htmlFor="create-weight">Poids (kg)</Label>
-                      <Input
-                        id="create-weight"
-                        type="number"
-                        value={createForm.weight || ''}
-                        onChange={(e) => setCreateForm({ ...createForm, weight: e.target.value ? parseFloat(e.target.value) : undefined })}
-                      />
+                      <Label htmlFor="create-blood-type">Groupe sanguin</Label>
+                      <div className="relative">
+                        <Activity className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="create-blood-type"
+                          value={createForm.blood_type}
+                          onChange={(e) => setCreateForm({ ...createForm, blood_type: e.target.value })}
+                          className="pl-10"
+                          placeholder="A+, B-, O+, etc."
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="create-height">Taille (cm)</Label>
+                        <Input
+                          id="create-height"
+                          type="number"
+                          value={createForm.height || ''}
+                          onChange={(e) => setCreateForm({ ...createForm, height: e.target.value ? parseFloat(e.target.value) : undefined })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="create-weight">Poids (kg)</Label>
+                        <Input
+                          id="create-weight"
+                          type="number"
+                          value={createForm.weight || ''}
+                          onChange={(e) => setCreateForm({ ...createForm, weight: e.target.value ? parseFloat(e.target.value) : undefined })}
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -645,7 +651,7 @@ export const PatientManagement = () => {
       {/* Modal d'édition */}
       {selectedPatient && (
         <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Modifier le patient</DialogTitle>
               <DialogDescription>
@@ -653,58 +659,62 @@ export const PatientManagement = () => {
               </DialogDescription>
             </DialogHeader>
             
-            <form onSubmit={handleEditPatient} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-first-name">Prénom</Label>
-                <Input
-                  id="edit-first-name"
-                  value={editForm.first_name || ''}
-                  onChange={(e) => setEditForm({ ...editForm, first_name: e.target.value })}
-                />
+            <form onSubmit={handleEditPatient} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-first-name">Prénom</Label>
+                  <Input
+                    id="edit-first-name"
+                    value={editForm.first_name || ''}
+                    onChange={(e) => setEditForm({ ...editForm, first_name: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="edit-last-name">Nom</Label>
+                  <Input
+                    id="edit-last-name"
+                    value={editForm.last_name || ''}
+                    onChange={(e) => setEditForm({ ...editForm, last_name: e.target.value })}
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="edit-last-name">Nom</Label>
-                <Input
-                  id="edit-last-name"
-                  value={editForm.last_name || ''}
-                  onChange={(e) => setEditForm({ ...editForm, last_name: e.target.value })}
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-birth-date">Date de naissance</Label>
+                  <Input
+                    id="edit-birth-date"
+                    type="date"
+                    value={editForm.birth_date || ''}
+                    onChange={(e) => setEditForm({ ...editForm, birth_date: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="edit-gender">Genre</Label>
+                  <Select value={editForm.gender || ''} onValueChange={(value) => setEditForm({ ...editForm, gender: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner le genre" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Homme</SelectItem>
+                      <SelectItem value="female">Femme</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="edit-birth-date">Date de naissance</Label>
-                <Input
-                  id="edit-birth-date"
-                  type="date"
-                  value={editForm.birth_date || ''}
-                  onChange={(e) => setEditForm({ ...editForm, birth_date: e.target.value })}
-                />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-blood-type">Groupe sanguin</Label>
+                  <Input
+                    id="edit-blood-type"
+                    value={editForm.blood_type || ''}
+                    onChange={(e) => setEditForm({ ...editForm, blood_type: e.target.value })}
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="edit-gender">Genre</Label>
-                <Select value={editForm.gender || ''} onValueChange={(value) => setEditForm({ ...editForm, gender: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner le genre" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="male">Homme</SelectItem>
-                    <SelectItem value="female">Femme</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="edit-blood-type">Groupe sanguin</Label>
-                <Input
-                  id="edit-blood-type"
-                  value={editForm.blood_type || ''}
-                  onChange={(e) => setEditForm({ ...editForm, blood_type: e.target.value })}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit-height">Taille (cm)</Label>
                   <Input
@@ -714,6 +724,7 @@ export const PatientManagement = () => {
                     onChange={(e) => setEditForm({ ...editForm, height: e.target.value ? parseFloat(e.target.value) : undefined })}
                   />
                 </div>
+                
                 <div className="space-y-2">
                   <Label htmlFor="edit-weight">Poids (kg)</Label>
                   <Input
