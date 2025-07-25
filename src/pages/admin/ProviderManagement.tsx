@@ -47,7 +47,8 @@ export function ProviderManagement() {
     phone: "",
     address: "",
     specialties: [],
-    status: "actif"
+    status: "actif",
+    creation_date: new Date().toISOString().split('T')[0]
   });
 
   useEffect(() => {
@@ -229,7 +230,8 @@ export function ProviderManagement() {
       user_id: provider.user_id || 0,
       type: provider.type,
       email: provider.email,
-      status: provider.status
+      status: provider.status,
+      creation_date: new Date().toISOString().split('T')[0]
     });
     setIsEditModalOpen(true);
   };
@@ -243,7 +245,8 @@ export function ProviderManagement() {
       phone: "",
       address: "",
       specialties: [],
-      status: "actif"
+      status: "actif",
+      creation_date: new Date().toISOString().split('T')[0]
     });
   };
 

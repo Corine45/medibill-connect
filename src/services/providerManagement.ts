@@ -40,21 +40,44 @@ export interface ProviderListResponse {
 export interface CreateProviderData {
   user_id: number;
   name: string;
+  director?: string;
   type: string;
   email?: string;
   phone?: string;
   address?: string;
+  description?: string;
+  approval_number?: string;
+  creation_date: string;
   specialties?: string[];
-  latitude?: number;
-  longitude?: number;
   status?: string;
+  documents?: {
+    type: string;
+    name: string;
+    path: string;
+    status?: string;
+    added_on?: string;
+  }[];
 }
 
 export interface UpdateProviderData {
   name?: string;
+  director?: string;
+  type?: string;
+  email?: string;
   phone?: string;
   address?: string;
+  description?: string;
+  approval_number?: string;
+  creation_date?: string;
   specialties?: string[];
+  status?: string;
+  documents?: {
+    type: string;
+    name: string;
+    path: string;
+    status?: string;
+    added_on?: string;
+  }[];
 }
 
 export const providerManagementService = {

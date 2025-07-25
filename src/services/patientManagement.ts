@@ -37,26 +37,35 @@ export interface PatientListResponse {
 }
 
 export interface CreatePatientData {
-  user_id: number;
   first_name: string;
   last_name: string;
   birth_date: string;
-  gender: string;
-  blood_type?: string;
+  gender: 'male' | 'female';
+  blood_group?: string;
   height?: number;
   weight?: number;
   address?: string;
+  documents?: {
+    title: string;
+    type: string;
+    file: File;
+  }[];
 }
 
 export interface UpdatePatientData {
   first_name?: string;
   last_name?: string;
   birth_date?: string;
-  gender?: string;
-  blood_type?: string;
+  gender?: 'male' | 'female';
+  blood_group?: string;
   height?: number;
   weight?: number;
   address?: string;
+  documents?: {
+    title: string;
+    type: string;
+    file: File;
+  }[];
 }
 
 export const patientManagementService = {
@@ -85,23 +94,57 @@ export const patientManagementService = {
 
   // Créer un nouveau patient
   async createPatient(patientData: CreatePatientData): Promise<ApiResponse<PatientData>> {
+    const formData = new FormData();
+    
+    // Ajouter les champs principaux
+    Object.entries(patientData).forEach(([key, value]) => {
+      if (key !== 'documents' && value !== undefined && value !== null) {
+        formData.append(key, value.toString());
+      }
+    });
+
+    // Ajouter les documents s'ils existent
+    if (patientData.documents) {
+      patientData.documents.forEach((doc, index) => {
+        formData.append(`documents[${index}][title]`, doc.title);
+        formData.append(`documents[${index}][type]`, doc.type);
+        if (doc.file) {
+          formData.append(`documents[${index}][file]`, doc.file);
+        }
+      });
+    }
+
     return apiRequest<ApiResponse<PatientData>>('/users/admin/patient', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(patientData),
+      body: formData,
     });
   },
 
   // Mettre à jour un patient
   async updatePatient(id: number, patientData: UpdatePatientData): Promise<ApiResponse<PatientData>> {
+    const formData = new FormData();
+    
+    // Ajouter les champs principaux
+    Object.entries(patientData).forEach(([key, value]) => {
+      if (key !== 'documents' && value !== undefined && value !== null) {
+        formData.append(key, value.toString());
+      }
+    });
+
+    // Ajouter les documents s'ils existent
+    if (patientData.documents) {
+      patientData.documents.forEach((doc, index) => {
+        if (doc.file) {
+          formData.append(`documents[${index}]`, doc.file);
+          formData.append(`document_titles[${index}]`, doc.title);
+          formData.append(`document_types[${index}]`, doc.type);
+        }
+      });
+    }
+
     return apiRequest<ApiResponse<PatientData>>(`/users/admin/patient/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(patientData),
+      body: formData,
     });
   },
 
