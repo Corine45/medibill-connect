@@ -73,19 +73,19 @@ export const patientManagementService = {
     if (params?.status) searchParams.append('status', params.status);
     
     const queryString = searchParams.toString();
-    const endpoint = `users/admin/patient${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/users/admin/patient${queryString ? `?${queryString}` : ''}`;
     
     return apiRequest<ApiResponse<PatientListResponse>>(endpoint);
   },
 
   // Récupérer un patient spécifique
   async getPatient(id: number): Promise<ApiResponse<{ patient: PatientData }>> {
-    return apiRequest<ApiResponse<{ patient: PatientData }>>(`users/admin/patient/${id}`);
+    return apiRequest<ApiResponse<{ patient: PatientData }>>(`/users/admin/patient/${id}`);
   },
 
   // Créer un nouveau patient
   async createPatient(patientData: CreatePatientData): Promise<ApiResponse<PatientData>> {
-    return apiRequest<ApiResponse<PatientData>>('users/admin/patient', {
+    return apiRequest<ApiResponse<PatientData>>('/users/admin/patient', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ export const patientManagementService = {
 
   // Mettre à jour un patient
   async updatePatient(id: number, patientData: UpdatePatientData): Promise<ApiResponse<PatientData>> {
-    return apiRequest<ApiResponse<PatientData>>(`users/admin/patient/${id}`, {
+    return apiRequest<ApiResponse<PatientData>>(`/users/admin/patient/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -107,14 +107,14 @@ export const patientManagementService = {
 
   // Supprimer un patient (soft delete)
   async deletePatient(id: number): Promise<ApiResponse<void>> {
-    return apiRequest<ApiResponse<void>>(`users/admin/patient/${id}`, {
+    return apiRequest<ApiResponse<void>>(`/users/admin/patient/${id}`, {
       method: 'DELETE',
     });
   },
 
   // Restaurer un patient supprimé
   async restorePatient(id: number): Promise<ApiResponse<void>> {
-    return apiRequest<ApiResponse<void>>(`users/admin/patient/restore/${id}`, {
+    return apiRequest<ApiResponse<void>>(`/users/admin/patient/restore/${id}`, {
       method: 'PUT',
     });
   },
