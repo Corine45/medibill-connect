@@ -40,10 +40,10 @@ export function ProviderManagement() {
 
   // Données du formulaire
   const [formData, setFormData] = useState<CreateProviderData & UpdateProviderData>({
-    user_id: 0,
     name: "",
     type: "",
     email: "",
+    password: "",
     phone: "",
     address: "",
     specialties: [],
@@ -100,10 +100,10 @@ export function ProviderManagement() {
   };
 
   const handleCreateProvider = async () => {
-    if (!formData.user_id || !formData.name || !formData.type) {
+    if (!formData.name || !formData.type || !formData.email || !formData.password || !formData.creation_date) {
       toast({
         title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        description: "Veuillez remplir tous les champs obligatoires (nom, type, email, mot de passe, date de création)",
         variant: "destructive",
       });
       return;
@@ -227,9 +227,9 @@ export function ProviderManagement() {
       phone: provider.phone,
       address: provider.address || "",
       specialties: provider.specialties || [],
-      user_id: provider.user_id || 0,
       type: provider.type,
       email: provider.email,
+      password: "", // Not needed for update
       status: provider.status,
       creation_date: new Date().toISOString().split('T')[0]
     });
@@ -238,10 +238,10 @@ export function ProviderManagement() {
 
   const resetForm = () => {
     setFormData({
-      user_id: 0,
       name: "",
       type: "",
       email: "",
+      password: "",
       phone: "",
       address: "",
       specialties: [],
@@ -287,22 +287,13 @@ export function ProviderManagement() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="user_id">Utilisateur *</Label>
-                  <Select
-                    value={formData.user_id?.toString()}
-                    onValueChange={(value) => setFormData({ ...formData, user_id: parseInt(value) })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un utilisateur" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableUsers.map((user) => (
-                        <SelectItem key={user.id} value={user.id.toString()}>
-                          {user.name} ({user.email})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="name">Nom du prestataire *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Nom du prestataire"
+                  />
                 </div>
                 <div>
                   <Label htmlFor="type">Type de prestataire *</Label>
@@ -326,21 +317,44 @@ export function ProviderManagement() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="name">Nom du prestataire *</Label>
+                  <Label htmlFor="email">Email *</Label>
                   <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Nom du prestataire"
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="Email du prestataire"
                   />
                 </div>
+                <div>
+                  <Label htmlFor="password">Mot de passe *</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="Mot de passe"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="phone">Téléphone</Label>
                   <Input
                     id="phone"
-                    value={formData.phone}
+                    value={formData.phone || ""}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="Téléphone du prestataire"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="creation_date">Date de création *</Label>
+                  <Input
+                    id="creation_date"
+                    type="date"
+                    value={formData.creation_date}
+                    onChange={(e) => setFormData({ ...formData, creation_date: e.target.value })}
                   />
                 </div>
               </div>

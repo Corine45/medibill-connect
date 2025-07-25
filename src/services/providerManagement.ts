@@ -38,11 +38,11 @@ export interface ProviderListResponse {
 }
 
 export interface CreateProviderData {
-  user_id: number;
   name: string;
   director?: string;
   type: string;
-  email?: string;
+  email: string;
+  password: string;
   phone?: string;
   address?: string;
   description?: string;
