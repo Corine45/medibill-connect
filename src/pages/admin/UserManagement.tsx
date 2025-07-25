@@ -183,6 +183,7 @@ export const UserManagement = () => {
     try {
       const response = await userManagementService.getUser(user.id);
       if (response.status && response.data) {
+        // L'API retourne l'utilisateur avec ses relations (roles, patient, provider)
         setSelectedUser(response.data);
         setShowViewModal(true);
       }
@@ -346,12 +347,10 @@ export const UserManagement = () => {
                       <SelectTrigger>
                         <SelectValue placeholder="Sélectionner un rôle" />
                       </SelectTrigger>
-                      <SelectContent>
+                       <SelectContent>
                         <SelectItem value="patient">Patient</SelectItem>
                         <SelectItem value="provider">Prestataire</SelectItem>
-                        <SelectItem value="pharmacy">Pharmacie</SelectItem>
                         <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="superadmin">Super Admin</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -653,47 +652,199 @@ export const UserManagement = () => {
           </DialogHeader>
           
           {selectedUser && (
-            <div className="space-y-4">
-              <div className="flex items-center space-x-4">
+            <div className="space-y-6">
+              {/* En-tête utilisateur */}
+              <div className="flex items-start space-x-4 p-4 bg-muted/30 rounded-lg">
                 {selectedUser.photo ? (
                   <img 
                     src={selectedUser.photo.startsWith('http') ? selectedUser.photo : `${BASE_URL}/storage/${selectedUser.photo}`}
                     alt="Photo de profil"
-                    className="w-16 h-16 rounded-full object-cover"
+                    className="w-20 h-20 rounded-full object-cover border-2 border-background"
                   />
                 ) : (
-                  <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-white" />
+                  <div className="w-20 h-20 bg-gradient-primary rounded-full flex items-center justify-center border-2 border-background">
+                    <User className="w-10 h-10 text-white" />
                   </div>
                 )}
-                <div>
-                  <h3 className="text-lg font-semibold">{selectedUser.name}</h3>
-                  <p className="text-muted-foreground">{selectedUser.email}</p>
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold">{selectedUser.name}</h3>
+                  <p className="text-muted-foreground text-sm">{selectedUser.email}</p>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <Badge variant="outline" className="capitalize">
+                      {selectedUser.role}
+                    </Badge>
+                    <Badge variant={selectedUser.status === 'Actif' ? 'default' : 'destructive'}>
+                      {selectedUser.status}
+                    </Badge>
+                  </div>
                 </div>
               </div>
-              
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Téléphone</Label>
-                  <p className="text-sm">{selectedUser.phone || 'Non renseigné'}</p>
-                </div>
-                <div>
-                  <Label>Rôle</Label>
-                  <Badge variant="outline" className="capitalize">
-                    {selectedUser.role}
-                  </Badge>
-                </div>
-                <div>
-                  <Label>Statut</Label>
-                  <Badge variant={selectedUser.status === 'Actif' ? 'default' : 'destructive'}>
-                    {selectedUser.status}
-                  </Badge>
-                </div>
-                <div>
-                  <Label>Date de création</Label>
-                  <p className="text-sm">{new Date(selectedUser.created_at).toLocaleDateString('fr-FR')}</p>
+
+              {/* Informations de base */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
+                  Informations générales
+                </h4>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Téléphone</Label>
+                    <p className="text-sm font-medium">{selectedUser.phone || 'Non renseigné'}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Date de création</Label>
+                    <p className="text-sm font-medium">
+                      {new Date(selectedUser.created_at).toLocaleDateString('fr-FR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Email vérifié</Label>
+                    <p className="text-sm font-medium">
+                      {(selectedUser as any).email_verified_at ? 'Oui' : 'Non'}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Dernière mise à jour</Label>
+                    <p className="text-sm font-medium">
+                      {new Date((selectedUser as any).updated_at || selectedUser.created_at).toLocaleDateString('fr-FR')}
+                    </p>
+                  </div>
                 </div>
               </div>
+
+              {/* Données liées selon le rôle */}
+              {((selectedUser as any).patient || (selectedUser as any).provider || (selectedUser as any).pharmacy) && (
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
+                    Données spécifiques au rôle
+                  </h4>
+                  
+                  {/* Données patient */}
+                  {(selectedUser as any).patient && (
+                    <div className="p-4 border rounded-lg space-y-3">
+                      <h5 className="font-medium text-primary">Données Patient</h5>
+                      <div className="grid gap-3 md:grid-cols-2 text-sm">
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Nom complet</Label>
+                          <p className="font-medium">
+                            {(selectedUser as any).patient.first_name} {(selectedUser as any).patient.last_name}
+                          </p>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Date de naissance</Label>
+                          <p className="font-medium">
+                            {(selectedUser as any).patient.birth_date ? 
+                              new Date((selectedUser as any).patient.birth_date).toLocaleDateString('fr-FR') : 
+                              'Non renseigné'
+                            }
+                          </p>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Groupe sanguin</Label>
+                          <p className="font-medium">{(selectedUser as any).patient.blood_group || 'Non renseigné'}</p>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Profession</Label>
+                          <p className="font-medium">{(selectedUser as any).patient.profession || 'Non renseigné'}</p>
+                        </div>
+                        {(selectedUser as any).patient.address && (
+                          <div className="md:col-span-2">
+                            <Label className="text-xs text-muted-foreground">Adresse</Label>
+                            <p className="font-medium">{(selectedUser as any).patient.address}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Données prestataire */}
+                  {(selectedUser as any).provider && (
+                    <div className="p-4 border rounded-lg space-y-3">
+                      <h5 className="font-medium text-primary">Données Prestataire</h5>
+                      <div className="grid gap-3 md:grid-cols-2 text-sm">
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Type</Label>
+                          <p className="font-medium">{(selectedUser as any).provider.type || 'Non renseigné'}</p>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Directeur</Label>
+                          <p className="font-medium">{(selectedUser as any).provider.director || 'Non renseigné'}</p>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Numéro d'agrément</Label>
+                          <p className="font-medium">{(selectedUser as any).provider.approval_number || 'Non renseigné'}</p>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Spécialités</Label>
+                          <p className="font-medium">
+                            {(selectedUser as any).provider.specialties?.join(', ') || 'Non renseigné'}
+                          </p>
+                        </div>
+                        {(selectedUser as any).provider.address && (
+                          <div className="md:col-span-2">
+                            <Label className="text-xs text-muted-foreground">Adresse</Label>
+                            <p className="font-medium">{(selectedUser as any).provider.address}</p>
+                          </div>
+                        )}
+                        {(selectedUser as any).provider.description && (
+                          <div className="md:col-span-2">
+                            <Label className="text-xs text-muted-foreground">Description</Label>
+                            <p className="font-medium">{(selectedUser as any).provider.description}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Données pharmacie */}
+                  {(selectedUser as any).pharmacy && (
+                    <div className="p-4 border rounded-lg space-y-3">
+                      <h5 className="font-medium text-primary">Données Pharmacie</h5>
+                      <div className="grid gap-3 md:grid-cols-2 text-sm">
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Directeur</Label>
+                          <p className="font-medium">{(selectedUser as any).pharmacy.director || 'Non renseigné'}</p>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Numéro d'agrément</Label>
+                          <p className="font-medium">{(selectedUser as any).pharmacy.approval_number || 'Non renseigné'}</p>
+                        </div>
+                        {(selectedUser as any).pharmacy.address && (
+                          <div className="md:col-span-2">
+                            <Label className="text-xs text-muted-foreground">Adresse</Label>
+                            <p className="font-medium">{(selectedUser as any).pharmacy.address}</p>
+                          </div>
+                        )}
+                        {(selectedUser as any).pharmacy.description && (
+                          <div className="md:col-span-2">
+                            <Label className="text-xs text-muted-foreground">Description</Label>
+                            <p className="font-medium">{(selectedUser as any).pharmacy.description}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Rôles système */}
+              {(selectedUser as any).roles && (selectedUser as any).roles.length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
+                    Rôles système
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {(selectedUser as any).roles.map((role: any) => (
+                      <Badge key={role.id} variant="secondary" className="capitalize">
+                        {role.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>
@@ -770,9 +921,7 @@ export const UserManagement = () => {
                 <SelectContent>
                   <SelectItem value="patient">Patient</SelectItem>
                   <SelectItem value="provider">Prestataire</SelectItem>
-                  <SelectItem value="pharmacy">Pharmacie</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="superadmin">Super Admin</SelectItem>
                 </SelectContent>
               </Select>
             </div>
