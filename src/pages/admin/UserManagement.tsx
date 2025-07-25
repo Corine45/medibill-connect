@@ -66,14 +66,17 @@ export const UserManagement = () => {
       });
 
       if (response.status && response.data) {
-        setUsers(response.data.users);
-        setTotalPages(response.data.last_page);
-        setTotalUsers(response.data.total);
-        setActiveUsers(response.data.total_actifs);
-        setInactiveUsers(response.data.total_inactifs);
-        setNewThisMonth(response.data.new_this_month);
+        // Vérifier la structure de la réponse et adapter si nécessaire
+        const users = response.data.users || [];
+        setUsers(users);
+        setTotalPages(response.data.last_page || 1);
+        setTotalUsers(response.data.total || 0);
+        setActiveUsers(response.data.total_actifs || 0);
+        setInactiveUsers(response.data.total_inactifs || 0);
+        setNewThisMonth(response.data.new_this_month || 0);
       }
     } catch (error: any) {
+      console.log('API Response Error:', error);
       toast({
         title: "Erreur",
         description: error.message || "Impossible de charger les utilisateurs",
@@ -122,7 +125,6 @@ export const UserManagement = () => {
     e.preventDefault();
     if (!selectedUser) return;
 
-    console.log("Formulaire envoyé :", editForm);
     setIsLoading(true);
     try {
       await userManagementService.updateUser(selectedUser.id, editForm);
@@ -183,14 +185,13 @@ export const UserManagement = () => {
     try {
       const response = await userManagementService.getUser(user.id);
       if (response.status && response.data) {
-        // L'API retourne l'utilisateur avec ses relations (roles, patient, provider)
         setSelectedUser(response.data);
         setShowViewModal(true);
       }
     } catch (error: any) {
       toast({
         title: "Erreur",
-        description: error.message || "Impossible de charger les détails",
+        description: error.message || "Impossible de charger les détails de l'utilisateur",
         variant: "destructive",
       });
     }
@@ -201,24 +202,145 @@ export const UserManagement = () => {
     setEditForm({
       name: user.name,
       email: user.email,
-      phone: user.phone || '',
+      phone: user.phone,
       role: user.role,
     });
     setShowEditModal(true);
   };
 
-  const handlePhotoUpload = (file: File, isEdit: boolean = false) => {
-    if (isEdit) {
-      setEditForm({ ...editForm, photo: file });
-    } else {
-      setCreateForm({ ...createForm, photo: file });
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>, isCreate: boolean = false) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (isCreate) {
+        setCreateForm({ ...createForm, photo: file });
+      } else {
+        setEditForm({ ...editForm, photo: file });
+      }
     }
   };
 
   return (
-    <div className="space-y-6">
-      {/* En-tête avec statistiques */}
-      <div className="grid gap-4 md:grid-cols-4">
+    <div className="container mx-auto p-6 space-y-6">
+      {/* En-tête */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Gestion des Utilisateurs</h1>
+          <p className="text-muted-foreground">Gérez les utilisateurs de votre système</p>
+        </div>
+        
+        <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Nouvel Utilisateur
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Créer un utilisateur</DialogTitle>
+              <DialogDescription>
+                Ajouter un nouveau utilisateur au système
+              </DialogDescription>
+            </DialogHeader>
+            
+            <form onSubmit={handleCreateUser} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="create-name">Nom complet</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="create-name"
+                    value={createForm.name}
+                    onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="create-email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="create-email"
+                    type="email"
+                    value={createForm.email}
+                    onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="create-password">Mot de passe</Label>
+                <Input
+                  id="create-password"
+                  type="password"
+                  value={createForm.password}
+                  onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="create-phone">Téléphone</Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="create-phone"
+                    value={createForm.phone}
+                    onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="create-role">Rôle</Label>
+                <Select value={createForm.role} onValueChange={(value) => setCreateForm({ ...createForm, role: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un rôle" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="user">Utilisateur</SelectItem>
+                    <SelectItem value="patient">Patient</SelectItem>
+                    <SelectItem value="provider">Prestataire</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="create-photo">Photo de profil</Label>
+                <div className="relative">
+                  <Camera className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="create-photo"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handlePhotoUpload(e, true)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button type="button" variant="outline" onClick={() => setShowCreateModal(false)}>
+                  Annuler
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  Créer
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Statistiques */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Utilisateurs</CardTitle>
@@ -228,173 +350,44 @@ export const UserManagement = () => {
             <div className="text-2xl font-bold">{totalUsers}</div>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Utilisateurs Actifs</CardTitle>
-            <Users className="h-4 w-4 text-success" />
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">{activeUsers}</div>
+            <div className="text-2xl font-bold text-green-600">{activeUsers}</div>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Utilisateurs Inactifs</CardTitle>
-            <Users className="h-4 w-4 text-destructive" />
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">{inactiveUsers}</div>
+            <div className="text-2xl font-bold text-red-600">{inactiveUsers}</div>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Nouveaux ce mois</CardTitle>
-            <Plus className="h-4 w-4 text-primary" />
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{newThisMonth}</div>
+            <div className="text-2xl font-bold text-blue-600">{newThisMonth}</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filtres et actions */}
+      {/* Filtres */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Gestion des Utilisateurs</CardTitle>
-              <CardDescription>
-                Gérer les utilisateurs de l'application PassPay
-              </CardDescription>
-            </div>
-            
-            <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-              <DialogTrigger asChild>
-                <Button className="bg-gradient-primary hover:opacity-90">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Nouvel Utilisateur
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Créer un utilisateur</DialogTitle>
-                  <DialogDescription>
-                    Ajouter un nouvel utilisateur au système
-                  </DialogDescription>
-                </DialogHeader>
-                
-                <form onSubmit={handleCreateUser} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="create-name">Nom complet</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="create-name"
-                        value={createForm.name}
-                        onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="create-email">Email</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="create-email"
-                        type="email"
-                        value={createForm.email}
-                        onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="create-phone">Téléphone</Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="create-phone"
-                        value={createForm.phone}
-                        onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="create-password">Mot de passe</Label>
-                    <Input
-                      id="create-password"
-                      type="password"
-                      value={createForm.password}
-                      onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="create-role">Rôle</Label>
-                    <Select value={createForm.role} onValueChange={(value) => setCreateForm({ ...createForm, role: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner un rôle" />
-                      </SelectTrigger>
-                       <SelectContent>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="superadmin">Super Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Photo de profil (optionnel)</Label>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const input = document.createElement('input');
-                          input.type = 'file';
-                          input.accept = 'image/*';
-                          input.onchange = (e) => {
-                            const file = (e.target as HTMLInputElement).files?.[0];
-                            if (file) handlePhotoUpload(file);
-                          };
-                          input.click();
-                        }}
-                      >
-                        <Camera className="w-4 h-4 mr-2" />
-                        Choisir une photo
-                      </Button>
-                      {createForm.photo && <span className="text-sm text-muted-foreground">Photo sélectionnée</span>}
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end space-x-2 pt-4">
-                    <Button type="button" variant="outline" onClick={() => setShowCreateModal(false)}>
-                      Annuler
-                    </Button>
-                    <Button type="submit" disabled={isLoading}>
-                      Créer
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <CardTitle>Utilisateurs</CardTitle>
+          <CardDescription>
+            Gérer tous les utilisateurs du système
+          </CardDescription>
         </CardHeader>
-
         <CardContent>
-          {/* Filtres */}
           <div className="flex items-center space-x-4 mb-6">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -434,7 +427,7 @@ export const UserManagement = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user) => (
+                {users && users.length > 0 ? users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
@@ -535,200 +528,120 @@ export const UserManagement = () => {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                )) : (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                      {isLoading ? "Chargement..." : "Aucun utilisateur trouvé"}
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </div>
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center space-x-1 mt-4">
-              {/* Bouton Précédent */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="px-3"
-              >
-                Précédent
-              </Button>
-              
-              {/* Pages numérotées */}
-              {(() => {
-                const pages = [];
-                const maxVisiblePages = 5;
-                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-                
-                // Ajuster si on est proche de la fin
-                if (endPage - startPage < maxVisiblePages - 1) {
-                  startPage = Math.max(1, endPage - maxVisiblePages + 1);
-                }
-                
-                // Page 1 si pas visible
-                if (startPage > 1) {
-                  pages.push(
-                    <Button
-                      key={1}
-                      variant={1 === currentPage ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(1)}
-                      className="min-w-[40px]"
-                    >
-                      1
-                    </Button>
-                  );
-                  if (startPage > 2) {
-                    pages.push(
-                      <span key="ellipsis1" className="px-2 text-muted-foreground">
-                        ...
-                      </span>
-                    );
-                  }
-                }
-                
-                // Pages visibles
-                for (let i = startPage; i <= endPage; i++) {
-                  pages.push(
-                    <Button
-                      key={i}
-                      variant={i === currentPage ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(i)}
-                      className="min-w-[40px]"
-                    >
-                      {i}
-                    </Button>
-                  );
-                }
-                
-                // Dernière page si pas visible
-                if (endPage < totalPages) {
-                  if (endPage < totalPages - 1) {
-                    pages.push(
-                      <span key="ellipsis2" className="px-2 text-muted-foreground">
-                        ...
-                      </span>
-                    );
-                  }
-                  pages.push(
-                    <Button
-                      key={totalPages}
-                      variant={totalPages === currentPage ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(totalPages)}
-                      className="min-w-[40px]"
-                    >
-                      {totalPages}
-                    </Button>
-                  );
-                }
-                
-                return pages;
-              })()}
-              
-              {/* Bouton Suivant */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                className="px-3"
-              >
-                Suivant
-              </Button>
+            <div className="flex items-center justify-between space-x-2 py-4">
+              <div className="text-sm text-muted-foreground">
+                Page {currentPage} sur {totalPages}
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Précédent
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Suivant
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
       </Card>
 
       {/* Modal de visualisation */}
-      <Dialog open={showViewModal} onOpenChange={setShowViewModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Détails de l'utilisateur</DialogTitle>
-          </DialogHeader>
-          
-          {selectedUser && (
-            <div className="space-y-6">
-              {/* En-tête utilisateur */}
-              <div className="flex items-start space-x-4 p-4 bg-muted/30 rounded-lg">
+      {selectedUser && (
+        <Dialog open={showViewModal} onOpenChange={setShowViewModal}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Détails de l'utilisateur</DialogTitle>
+              <DialogDescription>
+                Informations complètes de l'utilisateur
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="grid gap-6 py-4">
+              {/* Photo et informations de base */}
+              <div className="flex items-start space-x-6">
                 {selectedUser.photo ? (
                   <img 
                     src={selectedUser.photo.startsWith('http') ? selectedUser.photo : `${BASE_URL}/storage/${selectedUser.photo}`}
-                    alt="Photo de profil"
-                    className="w-20 h-20 rounded-full object-cover border-2 border-background"
+                    alt="Avatar"
+                    className="w-24 h-24 rounded-full object-cover border"
                   />
                 ) : (
-                  <div className="w-20 h-20 bg-gradient-primary rounded-full flex items-center justify-center border-2 border-background">
-                    <User className="w-10 h-10 text-white" />
+                  <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center border">
+                    <span className="text-3xl font-medium">
+                      {selectedUser.name.charAt(0).toUpperCase()}
+                    </span>
                   </div>
                 )}
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold">{selectedUser.name}</h3>
-                  <p className="text-muted-foreground text-sm">{selectedUser.email}</p>
-                  <div className="flex items-center space-x-2 mt-2">
-                    <Badge variant="outline" className="capitalize">
-                      {selectedUser.role}
-                    </Badge>
-                    <Badge variant={selectedUser.status === 'Actif' ? 'default' : 'destructive'}>
-                      {selectedUser.status}
-                    </Badge>
+                
+                <div className="flex-1 space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Nom complet</Label>
+                    <p className="text-lg font-semibold">{selectedUser.name}</p>
                   </div>
-                </div>
-              </div>
-
-              {/* Informations de base */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
-                  Informations générales
-                </h4>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-1">
-                    <Label className="text-xs text-muted-foreground">Téléphone</Label>
-                    <p className="text-sm font-medium">{selectedUser.phone || 'Non renseigné'}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs text-muted-foreground">Date de création</Label>
-                    <p className="text-sm font-medium">
-                      {new Date(selectedUser.created_at).toLocaleDateString('fr-FR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs text-muted-foreground">Email vérifié</Label>
-                    <p className="text-sm font-medium">
-                      {(selectedUser as any).email_verified_at ? 'Oui' : 'Non'}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs text-muted-foreground">Dernière mise à jour</Label>
-                    <p className="text-sm font-medium">
-                      {new Date((selectedUser as any).updated_at || selectedUser.created_at).toLocaleDateString('fr-FR')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Données liées selon le rôle - seulement si c'est un admin/superadmin avec des relations */}
-              {((selectedUser as any).patient || (selectedUser as any).provider || (selectedUser as any).pharmacy) && (
-                <div className="space-y-4">
-                  <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
-                    Données liées (historiques)
-                  </h4>
                   
-                  {/* Note : Ces données sont conservées pour l'historique mais ne sont plus activement utilisées */}
-                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                    <p className="text-sm text-amber-800">
-                      Note: Ces données peuvent provenir d'anciens rôles et sont conservées à des fins d'historique.
-                    </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-muted-foreground">Email</Label>
+                      <p className="text-sm">{selectedUser.email}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-muted-foreground">Téléphone</Label>
+                      <p className="text-sm">{selectedUser.phone || 'N/A'}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-muted-foreground">Rôle</Label>
+                      <Badge variant="outline" className="capitalize mt-1">
+                        {selectedUser.role}
+                      </Badge>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-muted-foreground">Statut</Label>
+                      <div className="mt-1">
+                        <Badge variant={selectedUser.status === 'Actif' ? 'default' : 'destructive'}>
+                          {selectedUser.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Date de création</Label>
+                    <p className="text-sm">{new Date(selectedUser.created_at).toLocaleDateString('fr-FR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}</p>
                   </div>
                 </div>
-              )}
+              </div>
 
               {/* Rôles système */}
               {(selectedUser as any).roles && (selectedUser as any).roles.length > 0 && (
@@ -746,121 +659,98 @@ export const UserManagement = () => {
                 </div>
               )}
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Modal d'édition */}
-      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Modifier l'utilisateur</DialogTitle>
-            <DialogDescription>
-              Modifier les informations de l'utilisateur
-            </DialogDescription>
-          </DialogHeader>
-          
-          <form onSubmit={handleEditUser} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-name">Nom complet</Label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+      {selectedUser && (
+        <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Modifier l'utilisateur</DialogTitle>
+              <DialogDescription>
+                Mettre à jour les informations de l'utilisateur
+              </DialogDescription>
+            </DialogHeader>
+            
+            <form onSubmit={handleEditUser} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-name">Nom complet</Label>
                 <Input
                   id="edit-name"
                   value={editForm.name || ''}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  className="pl-10"
                 />
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="edit-email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <div className="space-y-2">
+                <Label htmlFor="edit-email">Email</Label>
                 <Input
                   id="edit-email"
                   type="email"
                   value={editForm.email || ''}
                   onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                  className="pl-10"
                 />
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="edit-phone">Téléphone</Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <div className="space-y-2">
+                <Label htmlFor="edit-password">Nouveau mot de passe (optionnel)</Label>
+                <Input
+                  id="edit-password"
+                  type="password"
+                  value={editForm.password || ''}
+                  onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                  placeholder="Laisser vide pour conserver l'actuel"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-phone">Téléphone</Label>
                 <Input
                   id="edit-phone"
                   value={editForm.phone || ''}
                   onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                  className="pl-10"
                 />
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="edit-password">Nouveau mot de passe (optionnel)</Label>
-              <Input
-                id="edit-password"
-                type="password"
-                value={editForm.password || ''}
-                onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
-                placeholder="Laisser vide pour ne pas changer"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="edit-role">Rôle</Label>
-              <Select value={editForm.role} onValueChange={(value) => setEditForm({ ...editForm, role: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un rôle" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="superadmin">Super Admin</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Changer la photo (optionnel)</Label>
-              <div className="flex items-center space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    const input = document.createElement('input');
-                    input.type = 'file';
-                    input.accept = 'image/*';
-                    input.onchange = (e) => {
-                      const file = (e.target as HTMLInputElement).files?.[0];
-                      if (file) handlePhotoUpload(file, true);
-                    };
-                    input.click();
-                  }}
-                >
-                  <Camera className="w-4 h-4 mr-2" />
-                  Choisir une photo
-                </Button>
-                {editForm.photo && <span className="text-sm text-muted-foreground">Nouvelle photo sélectionnée</span>}
+              <div className="space-y-2">
+                <Label htmlFor="edit-role">Rôle</Label>
+                <Select value={editForm.role || ''} onValueChange={(value) => setEditForm({ ...editForm, role: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un rôle" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="user">Utilisateur</SelectItem>
+                    <SelectItem value="patient">Patient</SelectItem>
+                    <SelectItem value="provider">Prestataire</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
 
-            <div className="flex justify-end space-x-2 pt-4">
-              <Button type="button" variant="outline" onClick={() => setShowEditModal(false)}>
-                Annuler
-              </Button>
-              <Button type="submit" disabled={isLoading}>
-                Sauvegarder
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+              <div className="space-y-2">
+                <Label htmlFor="edit-photo">Nouvelle photo de profil</Label>
+                <Input
+                  id="edit-photo"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handlePhotoUpload(e, false)}
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button type="button" variant="outline" onClick={() => setShowEditModal(false)}>
+                  Annuler
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  Modifier
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
