@@ -41,6 +41,8 @@ export interface CreatePatientData {
   last_name: string;
   birth_date: string;
   gender: 'male' | 'female';
+  email: string;
+  password: string;
   blood_group?: string;
   height?: number;
   weight?: number;

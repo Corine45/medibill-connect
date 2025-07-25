@@ -51,6 +51,8 @@ export default function SubscriberManagement() {
     last_name: '',
     birth_date: '',
     gender: 'male',
+    email: '',
+    password: '',
     blood_group: '',
     height: undefined,
     weight: undefined,
@@ -108,6 +110,8 @@ export default function SubscriberManagement() {
         last_name: '',
         birth_date: '',
         gender: 'male',
+        email: '',
+        password: '',
         blood_group: '',
         height: undefined,
         weight: undefined,
@@ -307,6 +311,31 @@ export default function SubscriberManagement() {
                         value={createForm.last_name}
                         onChange={(e) => setCreateForm({ ...createForm, last_name: e.target.value })}
                         required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="create-email">Email *</Label>
+                      <Input
+                        id="create-email"
+                        type="email"
+                        value={createForm.email}
+                        onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="create-password">Mot de passe *</Label>
+                      <Input
+                        id="create-password"
+                        type="password"
+                        value={createForm.password}
+                        onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
+                        required
+                        minLength={6}
                       />
                     </div>
                   </div>
