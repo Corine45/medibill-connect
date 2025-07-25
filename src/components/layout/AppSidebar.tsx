@@ -40,6 +40,8 @@ const roleMenus = {
       items: [
         { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
         { title: "Gestion Utilisateurs", url: "/admin/users", icon: Users },
+        { title: "Gestion Patients", url: "/admin/patients", icon: UserCheck },
+        { title: "Gestion Prestataires", url: "/admin/providers", icon: Building2 },
         { title: "Rôles & Permissions", url: "/admin/roles", icon: Shield },
         { title: "Statistiques", url: "/admin/stats", icon: BarChart3 },
       ],
@@ -51,6 +53,8 @@ const roleMenus = {
       items: [
         { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
         { title: "Gestion Utilisateurs", url: "/admin/users", icon: Users },
+        { title: "Gestion Patients", url: "/admin/patients", icon: UserCheck },
+        { title: "Gestion Prestataires", url: "/admin/providers", icon: Building2 },
         { title: "Statistiques", url: "/admin/stats", icon: BarChart3 },
       ],
     },

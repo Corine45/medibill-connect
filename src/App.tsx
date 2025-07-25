@@ -16,6 +16,8 @@ import { ProviderDashboard } from "@/pages/provider/ProviderDashboard";
 import { PharmacyDashboard } from "@/pages/pharmacy/PharmacyDashboard";
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
 import { UserManagement } from "@/pages/admin/UserManagement";
+import { PatientManagement } from "@/pages/admin/PatientManagement";
+import { ProviderManagement } from "@/pages/admin/ProviderManagement";
 import { Profile } from "@/pages/Profile";
 
 import NotFound from "./pages/NotFound";
@@ -172,6 +174,8 @@ const AdminRoutes = () => (
   <Routes>
     <Route index element={<AdminDashboard />} />
     <Route path="users" element={<UserManagement />} />
+    <Route path="patients" element={<PatientManagement />} />
+    <Route path="providers" element={<ProviderManagement />} />
     <Route path="roles" element={<div>Rôles & Permissions - En développement</div>} />
     <Route path="stats" element={<div>Statistiques - En développement</div>} />
   </Routes>
